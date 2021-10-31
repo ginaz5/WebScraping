@@ -39,7 +39,7 @@ job_list = []
 
 for i in range(0, 40, 10):
     print(f"Getting page {i} from Indeed")
-    c = extract(0)
+    c = extract(i)
     transform(c)
 
 df = pd.DataFrame(job_list)
