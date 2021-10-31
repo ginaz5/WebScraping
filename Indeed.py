@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+import pandas as pd
 
 def extract(page):
     headers = {'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.54 Safari/537.36'}
@@ -13,7 +14,7 @@ def transform(soup):
     divs = soup.find_all('div', class_='job_seen_beacon')
     for item in divs:
         if item.find('span').text == "新職缺":
-            title = "<< NEW POST >> " +item.find_all('span')[1].text
+            title = "(NEW POST)" +item.find_all('span')[1].text
         else:
             title = item.find('span').text
         company = item.find('span', class_="companyName").text
@@ -35,6 +36,12 @@ def transform(soup):
     return
     
 job_list = []
-c = extract(0)
-transform(c)
-print(job_list)
+
+for i in range(0, 40, 10):
+    print(f"Getting page {i} from Indeed")
+    c = extract(0)
+    transform(c)
+
+df = pd.DataFrame(job_list)
+print(df.head)
+df.to_csv('Python_jobs_indeed.csv', encoding='utf-8-sig')
