@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
+import datetime as dt
 
 def extract(page):
     headers = {'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.54 Safari/537.36'}
@@ -42,6 +43,10 @@ for i in range(0, 40, 10):
     c = extract(i)
     transform(c)
 
+today = dt.date.today()
+month = today.month
+date = today.day
+
 df = pd.DataFrame(job_list)
 print(df.head)
-df.to_csv('Python_jobs_indeed.csv', encoding='utf-8-sig')
+df.to_csv(f"{month}{date}_Python_jobs_indeed.csv", encoding='utf-8-sig')
