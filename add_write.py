@@ -1,8 +1,14 @@
+import datetime as dt
+from posixpath import join
+from googleapiclient.discovery import build
+from google.oauth2 import service_account
+
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 import datetime as dt
 
+# --data-- 
 def extract(page):
     headers = {'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.54 Safari/537.36'}
     # page 1 -> 0, 2 -> 10, 3 -> 20
@@ -32,8 +38,8 @@ def transform(soup):
             'Salary': salary,
             'Summary':summary
         }
-
-        job_list.append(job)
+        for key, value in job.items():
+            job_list.append([key, value])
     return
     
 job_list = []
@@ -43,10 +49,45 @@ for i in range(0, 40, 10):
     c = extract(i)
     transform(c)
 
-today = dt.date.today()
-month = today.month
-date = today.day
 
-df = pd.DataFrame(job_list)
-print(df.head)
-df.to_csv(f"{month}{date}_Python_jobs_indeed.csv", encoding='utf-8-sig')
+# Generate Credentials
+SERVICE_ACCOUNT_FILE = 'pyjobs.json' # the path of json file
+SCOPES = ['https://www.googleapis.com/auth/spreadsheets'] # to read and write
+
+creds = None
+creds = service_account.Credentials.from_service_account_file(
+SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+
+# The ID spreadsheet.
+SPREADSHEET_ID = '13zrThBwGdVfhno9MILWokzJerrQKuS8iWZhakJdY87E'
+
+
+service = build('sheets', 'v4', credentials=creds)
+
+# Call the Sheets API
+sheet = service.spreadsheets()
+today = str(dt.datetime.today().date())
+request_body = {
+    'requests': [{
+        "addSheet": {
+            'properties': {
+                    'title': today,
+
+                }
+             },
+    }]
+}
+
+
+# create new worksheet
+add_response = sheet.batchUpdate(spreadsheetId = SPREADSHEET_ID, body = request_body).execute()
+
+# write content
+update_response = sheet.values().update(
+    spreadsheetId = SPREADSHEET_ID, 
+    range = today, 
+    valueInputOption = "USER_ENTERED",
+    body = {"values":job_list}).execute()
+
+# print("ADD:", add_response)
+print("Update:", update_response)
