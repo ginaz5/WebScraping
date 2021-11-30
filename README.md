@@ -1,14 +1,19 @@
 # It helps to search jobs more efficiently
 
 ## Indeed.py
-Mission : Search python jobs on indeed.com and save the scrap data as csv file on the same directory where you run this py file.
-Filename : <MonthDate>_Python_jobs_indeed.csv
-Filepath :
+### Mission
+Search python jobs on indeed.com and save the scrap data as csv file on the same directory where you run this py file.
+### Filename
+<MonthDate>_Python_jobs_indeed.csv
+
+### Filepath
 .
+  
 ├── 1130_Python_jobs_indeed.csv
+  
 ├── Indeed.py
 
-File Preview:
+### File Preview:
 ![View of csv](/viewofcsv.png)
 
 ## FindJobs_104.py
