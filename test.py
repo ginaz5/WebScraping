@@ -38,8 +38,9 @@ def transform(soup):
             'Salary': salary,
             'Summary':summary
         }
+        # job_list.append(job)∑
         for key, value in job.items():
-            job_list.append([key, value])
+            job_list.append(value)
     return
     
 job_list = []
@@ -48,7 +49,7 @@ for i in range(0, 40, 10):
     print(f"Getting page {i} from Indeed")
     c = extract(i)
     transform(c)
-
+print(job_list)
 
 # Generate Credentials
 SERVICE_ACCOUNT_FILE = 'pyjobs.json' # the path of json file
@@ -87,7 +88,7 @@ update_response = sheet.values().update(
     spreadsheetId = SPREADSHEET_ID, 
     range = today, 
     valueInputOption = "USER_ENTERED",
-    body = {"values":job_list}).execute()
+    body = {"majorDimension": "ROWS", "values":job_list}).execute() # ROWS is default setting
 
-# print("ADD:", add_response)
+print("ADD:", add_response)
 print("Update:", update_response)
